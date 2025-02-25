@@ -1,4 +1,3 @@
-// src/ethereum.js
 import { ethers } from 'ethers';
 
 const contractAddress = "0x80685cC8d7e75f1cDDFe9E8ddd770953d0C8Aa91";
@@ -48,12 +47,16 @@ const contractABI = [
 export async function connectWallet() {
   if (window.ethereum) {
     try {
+      // Request account access
       await window.ethereum.request({ method: 'eth_requestAccounts' });
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
+      // For ethers v6, use BrowserProvider
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      console.log("Wallet connected successfully.");
       return signer;
     } catch (error) {
-      console.error("User denied account access");
+      console.error("Error connecting wallet:", error);
+      alert("Please allow account access in MetaMask to use this dApp.");
       return null;
     }
   } else {
